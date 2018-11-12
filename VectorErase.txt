@@ -1,0 +1,9 @@
+The erase() method returns a new (valid) iterator that points to the next element after the deleted one. You can use this iterator to continue with the loop:
+
+std::vector<std::string>::iterator iter;
+for (iter = m_vPaths.begin(); iter != m_vPaths.end(); ) {
+    if (::DeleteFile(iter->c_str()))
+        iter = m_vPaths.erase(iter);
+    else
+        ++iter;
+}

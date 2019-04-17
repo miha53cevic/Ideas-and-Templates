@@ -28,8 +28,8 @@ private:
 	// Using Vector2i
 	void ScreenToWorld(sf::Vector2i screen, sf::Vector2i& world)
 	{
-		world.x = (screen.x + Offset.x) / Scale.x;
-		world.y = (screen.y + Offset.y) / Scale.y;
+		world.x = screen.x / Scale.x + Offset.x;
+		world.y = screen.y / Scale.y + Offset.y;
 	}
 
 	void WorldToScreen(sf::Vector2i world, sf::Vector2i& screen)

@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.10)
+project(SFML_Test)
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+add_executable(SFMLTest main.cpp)
+target_link_libraries(SFMLTest sfml-graphics sfml-window sfml-system)

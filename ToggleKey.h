@@ -9,10 +9,14 @@ public:
 		, m_fTimeDelay(l_fTimeDelay)
 	{}
 
+	// If the key is pressed get the time that has elapsed
+	// since the last time the key was pressed if it is
+	// longer than fTimeDelay then restart and return true
 	bool isKeyPressed()
 	{
-		if (m_delay.getElapsedTime().asSeconds() > m_fTimeDelay) {
-			if (sf::Keyboard::isKeyPressed(m_key)) {
+		if (sf::Keyboard::isKeyPressed(m_key)) {
+			if (m_delay.getElapsedTime().asSeconds() > m_fTimeDelay) {
+
 				m_delay.restart();
 				return true;
 			}

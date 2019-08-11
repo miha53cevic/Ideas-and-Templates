@@ -1,0 +1,23 @@
+/*margin ->
+margin-top
+margin-right
+margin-bottom
+margin-left*/
+
+div {
+    /* Mjenja border velicinu */
+    width: 200px;
+
+    /* Postavlja marginu na auto - na sredinu */
+    margin: auto;
+    border: 1px solid red;
+
+    /* Pojedinacno postavljanje */
+    margin: 100px 50px
+}
+
+p {
+    /*This example lets the left margin of the <p> element be inherited from the parent element (<div>):*/
+    margin-left: inherit;
+}
+

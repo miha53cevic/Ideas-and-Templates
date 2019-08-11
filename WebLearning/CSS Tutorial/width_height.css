@@ -1,0 +1,13 @@
+/*The height and width properties are used to set the height and width of an element.*/
+
+div {
+    width: 300px;
+    height: 100px;
+
+    background-color: lightblue;
+
+    /* Max size when resizing window */
+    max-width: 300;
+
+    min-width: 5px;
+}

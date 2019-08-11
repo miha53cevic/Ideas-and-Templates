@@ -1,0 +1,20 @@
+/* CSS Elements can be considered boxes */
+div {
+    width: 300px;
+    border: 25px solid black;
+    padding: 25px;
+    margin: 25px;
+    
+}
+
+/*Explanation of the different parts:
+
+Content - The content of the box, where text and images appear
+Padding - Clears an area around the content. The padding is transparent
+Border - A border that goes around the padding and content
+Margin - Clears an area outside the border. The margin is transparent*/
+
+body {
+    background: url(https://media1.tenor.com/images/6003f9c2376858f23b961ba6cbe273f2/tenor.gif?itemid=8413959) no-repeat fixed top center;
+    background-size: 25%;
+}

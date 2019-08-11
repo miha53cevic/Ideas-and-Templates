@@ -1,0 +1,23 @@
+body {
+    background-image: url("https://media.giphy.com/media/4JpvyNYuyf0aI/giphy.gif");
+    
+    /* Repeat only on x axis */
+    background-repeat: repeat-x;
+
+    /* Don't repeat */
+    background-repeat: no-repeat;
+
+    background-position: top center;
+
+    /* Will not scroll with webpage */
+    background-attachment: fixed;
+
+    /* Shortened version of above background-color
+    background-image
+    background-repeat
+    background-attachment
+    background-position*/
+    background: url("https://media.giphy.com/media/4JpvyNYuyf0aI/giphy.gif") no-repeat fixed bottom center
+
+    
+}

@@ -1,0 +1,40 @@
+/*The color property is used to set the color of the text. The color is specified by:*/
+
+/* Sav tekst u body */
+body {
+    color:blue;
+}
+
+/* Samo h1 text */
+h1 {
+    color: green;
+    
+    text-align: center;
+
+    text-transform: uppercase;
+}
+
+p {
+    /*When the text-align property is set to "justify", each line is stretched so that every line has equal width, and the left and right margins are straight (like in magazines and newspapers):*/
+    text-align: justify;
+
+    text-decoration: overline;
+    text-transform: capitalize;
+
+    /* Uvlaka */
+    text-indent: 50px;
+
+    /* Razmak između slova */
+    letter-spacing: 8px;
+
+    /* The line-height property is used to specify the space between lines: */
+    line-height: 5px;
+
+    direction: rtl;
+
+    /* Ramzak između riječi */
+    word-spacing: 10px;
+
+    /* The following example specifies the position of the horizontal shadow (3px), the position of the vertical shadow (2px) and the color of the shadow (red): */
+    text-shadow: 3px 2px red;
+}

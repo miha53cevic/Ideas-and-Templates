@@ -1,0 +1,17 @@
+/*The CSS padding properties are used to generate space around an element's content, inside of any defined borders.*/
+
+/*CSS has properties for specifying the padding for each side of an element:
+
+padding-top
+padding-right
+padding-bottom
+padding-left*/
+
+div {
+    border: 3px solid black;
+    width: 300px;
+    padding: 25px;
+
+    /* To keep the width at 300px, no matter the amount of padding, you can use the box-sizing property. */
+    box-sizing: border-box;
+}

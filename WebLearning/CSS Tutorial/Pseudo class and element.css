@@ -1,0 +1,19 @@
+p {
+    display: none;
+    background-color: rgba(255, 255, 0, 50);
+}
+
+div:hover p {
+    display: block;
+}
+
+p::first-letter {
+    font-weight: bold;
+    color: green;
+}
+
+/* Kada korisnik ide oznaciti tekst */
+::selection {
+    color: purple;
+    background: blue;
+}

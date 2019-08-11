@@ -1,0 +1,17 @@
+/*An outline is a line that is drawn around elements, OUTSIDE the borders, to make the element "stand out".*/
+
+div {
+    padding: 50px;
+    width: 300px;
+    border: 5px solid black;
+
+    outline-style: groove;
+    outline-color: red;
+    outline-width: 50px;
+
+    /* Shorter version */
+    outline: 50px groove blue;
+
+    position: fixed;
+    margin: 100px 100px;
+}

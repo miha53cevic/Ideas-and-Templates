@@ -1,0 +1,16 @@
+/*border-style: dotted solid double dashed;
+top border is dotted
+right border is solid
+bottom border is double
+left border is dashed*/
+
+h1 {
+    border: 6px dotted;
+    border-radius: 5px;
+    border-width: 10px;
+
+    border-left: 5px solid red;
+    border-top-color: aqua;
+
+    background: lightgreen;
+}

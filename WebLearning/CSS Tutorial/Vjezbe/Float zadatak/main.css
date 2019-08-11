@@ -1,0 +1,34 @@
+ul {
+    background-color: darkgray;
+    padding: 0;
+    margin: 0;
+
+    /* Treba uzeti dio koji se vidi pa se stavlja na hidden koji clipa content */
+    overflow: hidden;
+
+    /* Slozi da duzina unorderlista bude prema contententu inace ide do kraja stranice desni dio */
+    width: fit-content;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    padding: 50px 60px;
+}
+
+li {
+    display: inline-block;
+}
+
+li {
+    /* Mice razmak izmedu */
+    float: left;
+}
+
+.active {
+    background-color: red;
+}
+
+a:hover {
+    background-color: lightgray;
+}

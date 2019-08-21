@@ -1,0 +1,15 @@
+https://www.reddit.com/r/opengl/comments/8vgba5/using_sdl_with_cmake/
+
+# Find the SDL2 library
+find_package(SDL2 REQUIRED)
+# Add SDL2 into include directories
+include_directories(${SDL2_INCLUDE_DIR})
+
+...
+
+# And in the linking 
+add_executable( ${PROJECT_NAME}
+    ...
+    ${SDL2_LIBRARY}     # Add this line
+    ...
+    )

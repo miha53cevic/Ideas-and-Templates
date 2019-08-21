@@ -10,6 +10,6 @@ include_directories(${SDL2_INCLUDE_DIR})
 # And in the linking 
 add_executable( ${PROJECT_NAME}
     ...
-    ${SDL2_LIBRARY}     # Add this line
+    ${SDL2_LIBRARIES}     # Add this line
     ...
     )

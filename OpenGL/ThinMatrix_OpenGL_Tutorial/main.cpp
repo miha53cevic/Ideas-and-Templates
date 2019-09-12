@@ -4,6 +4,7 @@
 #include "Loader.h"
 #include "Renderer.h"
 #include "Display_Manager.h"
+#include "StaticShader.h"
 
 int main()
 {
@@ -24,6 +25,7 @@ int main()
 
     Loader loader;
     Renderer renderer;
+    StaticShader staticShader;
 
     RawModel model = loader.dataToVAO(vertices, sizeof(vertices) / sizeof(vertices[0]), indicies, sizeof(indicies) / sizeof(indicies[0]));
 
@@ -35,7 +37,9 @@ int main()
         // Clear
         display_manager.clear();
 
+        staticShader.start();
         renderer.render(model);
+        staticShader.stop();
 
         // Display
         display_manager.update();

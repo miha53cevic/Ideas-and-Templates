@@ -18,13 +18,14 @@ Loader::~Loader()
     }
 }
 
-RawModel Loader::dataToVAO(GLfloat * data, int size)
+RawModel Loader::dataToVAO(GLfloat * data, int size, GLuint* indicies, int indexCount)
 {
     GLuint VAO = createVAO();
+    bindIndiciesBuffer(indicies, indexCount);
     storeDataInAttributeList(0, data, size);
     unbindVAO();
 
-    return RawModel(VAO, size / 3);
+    return RawModel(VAO, indexCount);
 }
 
 GLuint Loader::createVAO()
@@ -61,4 +62,13 @@ void Loader::storeDataInAttributeList(int attributeID, GLfloat* data, int size)
 void Loader::unbindVAO()
 {
     glBindVertexArray(0);
+}
+
+void Loader::bindIndiciesBuffer(GLuint * indicies, int size)
+{
+    GLuint EBO;
+    glGenBuffers(1, &EBO);
+    m_vbos.push_back(EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLuint) * size, indicies, GL_STATIC_DRAW);
 }

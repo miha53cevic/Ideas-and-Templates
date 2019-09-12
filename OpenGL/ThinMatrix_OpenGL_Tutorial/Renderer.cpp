@@ -11,7 +11,7 @@ void Renderer::prepeare()
 void Renderer::render(const RawModel& model)
 {
     glBindVertexArray(model.get_vaoID());
-    glDrawArrays(GL_TRIANGLES, 0, model.getVertexCount());
+    glDrawElements(GL_TRIANGLES, model.getVertexCount(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 

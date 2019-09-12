@@ -8,15 +8,15 @@
 int main()
 {
     GLfloat vertices[] = {
-        //Bottom Left Triangle
         -0.5f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f
+    };
 
-         //Bottom right triangle
-          0.5f, -0.5f, 0.0f,
-          0.5f,  0.5f, 0.0f,
-         -0.5f,  0.5f, 0.0f
+    GLuint indicies[] = {
+        0, 1, 3,
+        3, 1, 2
     };
 
     Display_Manager display_manager;
@@ -25,7 +25,7 @@ int main()
     Loader loader;
     Renderer renderer;
 
-    RawModel model = loader.dataToVAO(vertices, sizeof(vertices) / sizeof(vertices[0]));
+    RawModel model = loader.dataToVAO(vertices, sizeof(vertices) / sizeof(vertices[0]), indicies, sizeof(indicies) / sizeof(indicies[0]));
 
     while (display_manager.isOpen())
     {

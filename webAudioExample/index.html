@@ -1,0 +1,58 @@
+<!-- https://www.youtube.com/watch?v=24JFvG50zkc 
+
+https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Using_Web_Audio_API
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="mihaSimpleCanvas.js"></script>
+    <script src="webAudioVisualizer.js"></script>
+</head>
+
+<body>
+    <audio src="song.mp3" id="audioElement"></audio>
+
+    <button data-playing="false" role="switch" aria-checked="false">
+        <span>Play/Pause</span>
+    </button>
+
+    <div id="canvasArea"></div>
+</body>
+<script>
+    const audioElement = document.getElementById('audioElement');
+    const visualizer = new WebAudioVisualizer(audioElement, 16384);
+
+    document.querySelector('button').addEventListener('click', function () {
+
+        // check if context is in suspended state (autoplay policy)
+        if (visualizer.audioContext.state === 'suspended') {
+            visualizer.audioContext.resume();
+        }
+
+        // play or pause track depending on state
+        if (this.dataset.playing === 'false') {
+            audioElement.play();
+            this.dataset.playing = 'true';
+        } else if (this.dataset.playing === 'true') {
+            audioElement.pause();
+            this.dataset.playing = 'false';
+        }
+
+    }, false);
+
+    function draw() {
+        visualizer.draw();
+
+        window.requestAnimationFrame(draw);
+    }
+
+    draw();
+</script>
+
+</html>

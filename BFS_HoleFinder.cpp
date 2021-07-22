@@ -8,8 +8,9 @@
 
 // Globals
 std::string map;
-int R[4] = { 0, 1, 0, -1 };
-int C[4] = { -1, 0, 1, 0 };
+// Used for finding neighbours goes Top, right, down, left
+int R[4] = { 0, 1, 0, -1 }; // all x directions
+int C[4] = { -1, 0, 1, 0 }; // all y directions
 std::vector<bool> visited;
 
 int index(int x, int y)
@@ -36,7 +37,8 @@ bool BFS(int x, int y)
 
         auto p = q.front();
         q.pop();
-
+        
+        // Find the 4 neighbours
         for (int i = 0; i < 4; i++)
         {
             int xx = p.first + R[i];

@@ -1,15 +1,9 @@
-/*
-    GLOBJECTS
-    Author: miha53cevic
-    Version: 1.1.0
-*/
-
 #ifndef GLOBJECTS_H
 #define GLOBJECTS_H
 
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 
 #include <glad/glad.h>
@@ -19,12 +13,12 @@
 
 namespace gl
 {
-    static void glClearErrors();
-    static GLenum glCheckError(const char *file, int line);
+    void glClearErrors();
+    GLenum glCheckError(const char *file, int line);
 
 #define glLogCall(x) glClearErrors();\
     x;\
-    glCheckError(__FILE__, __LINE__) 
+    glCheckError(__FILE__, __LINE__)
 }
 
 namespace gl
@@ -40,10 +34,10 @@ namespace gl
         void Bind();
         void Unbind();
 
-        void setAttribute(int attributeID, std::string var_name);
-        void setUniformLocation(std::string uniform_name);
+        //void setAttribute(int attributeID, std::string var_name);
 
-        int getUniformLocation(std::string uniform_name);
+        void setUniformLocation(std::string uniform_name);
+        int  getUniformLocation(std::string uniform_name, bool log = true);
 
         void loadFloat(int location, float value);
         void loadVector2(int location, glm::vec2 vector);
@@ -55,8 +49,8 @@ namespace gl
     private:
         static const unsigned int NUM_SHADERS = 2;
 
-        std::vector<std::pair<int, std::string>> m_attributes;
-        std::map<std::string, int> m_uniformLocations;
+        //std::vector<std::pair<int, std::string>> m_attributes;
+        std::unordered_map<std::string, int> m_uniformLocations;
 
         GLuint CreateShader(const std::string& text, unsigned int type);
         std::string LoadShader(const std::string& fileName);
@@ -76,7 +70,7 @@ namespace gl
         void Bind();
         void Unbind();
 
-        GLuint VAO;
+        GLuint VAO = -1;
     };
 };
 
@@ -87,10 +81,11 @@ namespace gl
         VertexBufferObject();
         ~VertexBufferObject();
 
-        GLuint VBO;
+        GLuint VBO = -1;
 
-        void setData(const std::vector<GLfloat>& data, int attributeID, int size, int DrawMode = GL_STATIC_DRAW);
-        void setSubData(const std::vector<GLfloat>& data);
+        // stride is the size of each vertex, if 0 is given it takes thinks it's a packed array
+        void setData(const std::vector<GLfloat>& data, int attributeID, int size, GLsizei stride = 0, const void * offset = 0, int DrawMode = GL_STATIC_DRAW);
+        void setSubData(GLintptr offset, const std::vector<GLfloat>& data);
     };
 };
 
@@ -104,8 +99,8 @@ namespace gl
         void setData(const std::vector<GLuint>& indicies, int DrawMode = GL_STATIC_DRAW);
         void setSubData(const std::vector<GLuint>& indicies);
 
-        GLuint EBO;
-        GLuint size;
+        GLuint EBO  = -1;
+        GLuint size =  0;
     };
 };
 
@@ -120,7 +115,7 @@ namespace gl
         void loadTexture(std::string texture_path);
         void activateAndBind();
 
-        GLuint texture;
+        GLuint texture = -1;
     };
 };
 
@@ -139,6 +134,31 @@ namespace gl
         const GLfloat PIXEL_SIZE;
     };
 };
+
+namespace gl
+{
+    class Material
+    {
+    public:
+        Material();
+        Material(Shader* shader);
+        ~Material();
+
+        void setShader(Shader* shader);
+
+        void setUniform(std::string uniformName, float value);
+        void setUniform(std::string uniformName, glm::vec2 vector);
+        void setUniform(std::string uniformName, glm::vec3 vector);
+        void setUniform(std::string uniformName, glm::vec4 vector);
+        void setUniform(std::string uniformName, bool value);
+        void setUniform(std::string uniformName, const glm::mat4x4& matrix);
+
+        Shader* shader;
+
+    private:
+        bool ShaderLoaded();
+    };
+}
 
 /*
     Usage in code
@@ -161,16 +181,16 @@ namespace gl
 
 #include <glm/gtc/type_ptr.hpp>
 
-////////////////////////
-// GL ERROR HANDLING  //
-////////////////////////
+///////////////////////////////////////
+// GL ERROR HANDLING IMPLEMENTATION  //
+///////////////////////////////////////
 
-static void gl::glClearErrors()
+void gl::glClearErrors()
 {
     while (glGetError() != GL_NO_ERROR);
 }
 
-static GLenum gl::glCheckError(const char *file, int line)
+GLenum gl::glCheckError(const char *file, int line)
 {
     GLenum errorCode;
     while ((errorCode = glGetError()) != GL_NO_ERROR)
@@ -197,6 +217,7 @@ static GLenum gl::glCheckError(const char *file, int line)
 
 gl::Shader::Shader()
 {
+    // Initial value for error checking
     m_program = -1;
 }
 
@@ -223,11 +244,11 @@ void gl::Shader::createProgram(const std::string & fileName)
     }
 
 
-    // Bind attributes
-    for (auto& attribute : m_attributes)
-    {
-        glLogCall(glBindAttribLocation(m_program, attribute.first, attribute.second.c_str()));
-    }
+    //// Bind attributes
+    //for (auto& attribute : m_attributes)
+    //{
+    //    glLogCall(glBindAttribLocation(m_program, attribute.first, attribute.second.c_str()));
+    //}
 
     glLogCall(glLinkProgram(m_program));
     glLogCall(glValidateProgram(m_program));
@@ -243,25 +264,28 @@ void gl::Shader::Unbind()
     glLogCall(glUseProgram(0));
 }
 
-void gl::Shader::setAttribute(int attributeID, std::string var_name)
-{
-    m_attributes.push_back(std::make_pair(attributeID, var_name));
-}
+//void gl::Shader::setAttribute(int attributeID, std::string var_name)
+//{
+//    m_attributes.push_back(std::make_pair(attributeID, var_name));
+//}
 
 void gl::Shader::setUniformLocation(std::string uniform_name)
 {
     if (m_program == -1)
-        std::cout << "CreateProgram hasn't been called yet!\n";
+        std::cout << "[Shader]: CreateProgram hasn't been called yet!\n";
 
     glLogCall(int location = glGetUniformLocation(m_program, uniform_name.c_str()));
     m_uniformLocations.insert(std::make_pair(uniform_name, location));
 }
 
-int gl::Shader::getUniformLocation(std::string uniform_name)
+// Return -1 on not found
+int gl::Shader::getUniformLocation(std::string uniform_name, bool log)
 {
     if (m_uniformLocations.find(uniform_name) == m_uniformLocations.end())
     {
-        std::cout << "Found no location for the uniform: " << uniform_name << "\n";
+        if (log)
+            std::cout << "[Shader]: Found no location for the uniform: " << uniform_name << "\n";
+
         return -1;
     }
     else
@@ -307,7 +331,7 @@ GLuint gl::Shader::CreateShader(const std::string & text, unsigned int type)
     glLogCall(GLuint shader = glCreateShader(type));
 
     if (shader == 0)
-        std::cerr << "Error compiling shader type " << type << std::endl;
+        std::cerr << "[Shader]: Error compiling shader type " << type << std::endl;
 
     const GLchar* p[1];
     p[0] = text.c_str();
@@ -338,7 +362,7 @@ std::string gl::Shader::LoadShader(const std::string & fileName)
     }
     else
     {
-        std::cerr << "Unable to load shader: " << fileName << std::endl;
+        std::cerr << "[Shader]: Unable to load shader: " << fileName << std::endl;
     }
 
     return output;
@@ -386,21 +410,21 @@ gl::VertexBufferObject::~VertexBufferObject()
     glLogCall(glDeleteBuffers(1, &VBO));
 }
 
-void gl::VertexBufferObject::setData(const std::vector<GLfloat>& data, int attributeID, int size, int DrawMode)
+void gl::VertexBufferObject::setData(const std::vector<GLfloat>& data, int attributeID, int size, GLsizei stride, const void * offset, int DrawMode)
 {
     glLogCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
     glLogCall(glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * data.size(), data.data(), DrawMode));
 
     glLogCall(glEnableVertexAttribArray(attributeID));
-    glLogCall(glVertexAttribPointer(attributeID, size, GL_FLOAT, false, 0, 0));
+    glLogCall(glVertexAttribPointer(attributeID, size, GL_FLOAT, GL_FALSE, stride, offset));
 
     glLogCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void gl::VertexBufferObject::setSubData(const std::vector<GLfloat>& data)
+void gl::VertexBufferObject::setSubData(GLintptr offset, const std::vector<GLfloat>& data)
 {
     glLogCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    glLogCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * data.size(), data.data()));
+    glLogCall(glBufferSubData(GL_ARRAY_BUFFER, offset, sizeof(GLfloat) * data.size(), data.data()));
     glLogCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
@@ -518,6 +542,153 @@ std::vector<GLfloat> gl::TextureAtlas::getTextureCoords(const glm::ivec2 & coord
     GLfloat yMax = (yMin + INDV_TEX_SIZE) - PIXEL_SIZE;
 
     return { xMin, yMin, xMin, yMax, xMax, yMax, xMax, yMin };
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////
+// Material IMPLEMENTATION //
+/////////////////////////////
+gl::Material::Material()
+{
+    shader = nullptr;
+}
+
+gl::Material::Material(Shader* shader)
+{
+    Material();
+    this->shader = shader;
+}
+
+gl::Material::~Material()
+{
+    // for easier error checking
+    shader = nullptr;
+}
+
+void gl::Material::setShader(Shader* shader)
+{
+    this->shader = shader;
+}
+
+bool gl::Material::ShaderLoaded()
+{
+    if (shader == nullptr)
+    {
+        printf("[Material]: Shader was not set!\n");
+        return false;
+    }
+    else return true;
+}
+
+void gl::Material::setUniform(std::string uniformName, float value)
+{
+    if (!ShaderLoaded())
+        return;
+
+    // If uniform is new add it, otherwise just update the data
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadFloat(
+        shader->getUniformLocation(uniformName),
+        value
+    );
+    shader->Unbind();
+}
+
+void gl::Material::setUniform(std::string uniformName, glm::vec2 vector)
+{
+    if (!ShaderLoaded())
+        return;
+
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadVector2(
+        shader->getUniformLocation(uniformName),
+        vector
+    );
+    shader->Unbind();
+}
+
+void gl::Material::setUniform(std::string uniformName, glm::vec3 vector)
+{
+    if (!ShaderLoaded())
+        return;
+
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadVector3(
+        shader->getUniformLocation(uniformName),
+        vector
+    );
+    shader->Unbind();
+}
+
+void gl::Material::setUniform(std::string uniformName, glm::vec4 vector)
+{
+    if (!ShaderLoaded())
+        return;
+
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadVector4(
+        shader->getUniformLocation(uniformName),
+        vector
+    );
+    shader->Unbind();
+}
+
+void gl::Material::setUniform(std::string uniformName, bool value)
+{
+    if (!ShaderLoaded())
+        return;
+
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadBool(
+        shader->getUniformLocation(uniformName),
+        value
+    );
+    shader->Unbind();
+}
+
+void gl::Material::setUniform(std::string uniformName, const glm::mat4x4& matrix)
+{
+    if (!ShaderLoaded())
+        return;
+
+    if (shader->getUniformLocation(uniformName, false) == -1)
+    {
+        shader->setUniformLocation(uniformName);
+    }
+
+    shader->Bind();
+    shader->loadMatrix(
+        shader->getUniformLocation(uniformName),
+        matrix
+    );
+    shader->Unbind();
 }
 
 #endif // GLOBJECTS_IMPLEMENTATION

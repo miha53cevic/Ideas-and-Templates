@@ -1,0 +1,19 @@
+interface Props<T> {
+  a: T;
+  b: keyof T;
+}
+
+function Comp<T>(props: Props<T>) { // dok se zna vrijednost A se infera isto i T od funkcije
+  return <p>{props.a[props.b]}</p>;
+}
+
+const a = {
+  first: 1,
+  second: "true"
+};
+
+export default function App() {
+  return <Comp a={a} b={'second'} />; // b ima autocomplte za kljuceve od a
+}
+
+Result: true
